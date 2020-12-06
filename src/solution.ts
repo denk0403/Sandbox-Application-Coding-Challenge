@@ -5,7 +5,7 @@ import {
     CourseUID,
     PreReq,
     PreReqType,
-    PreReqValue,
+    PreReqValue
 } from "./courseTypes.js";
 import { get, post } from "./https_helpers.js";
 
@@ -13,31 +13,35 @@ import { get, post } from "./https_helpers.js";
 const COURSES_URL: string =
     "https://challenge.sandboxneu.com/s/PMRGIYLUMERDU6ZCMVWWC2LMEI5CEZDFNZXGS43LMF2HGNBTIBTW2YLJNQXGG33NEIWCEZDVMURDUMJWGA3TQMZVGU4TSLBCON2GCZ3FEI5CEURRJBQXEZBCPUWCE2DBONUCEORCIJXXEV2DKBBUSRKVGVYDOTLEGNYU6OB5EJ6Q====";
 
-// Completes a GET request to the submission URL and parses the response into JSON.
-/** The courses JSON object requested from the URL. */
-const coursesJSONResponse: CourseJSONResponse = JSON.parse(await get(COURSES_URL));
+async function main() {
+    // Completes a GET request to the submission URL and parses the response into JSON.
+    /** The courses JSON object requested from the URL. */
+    const coursesJSONResponse: CourseJSONResponse = JSON.parse(await get(COURSES_URL));
 
-/** The list of courses required by a major. */
-const courses: Course[] = coursesJSONResponse.courses;
+    /** The list of courses required by a major. */
+    const courses: Course[] = coursesJSONResponse.courses;
 
-// Determines a major plan for the courses above.
-/**
- * A list of courses, in one potential order, required to be taken in a major.
- * (null if no ordered solution is possible)
- */
-const plan: Course[] | null = determineMajorPlan(courses);
+    // Determines a major plan for the courses above.
+    /**
+     * A list of courses, in one potential order, required to be taken in a major.
+     * (null if no ordered solution is possible)
+     */
+    const plan: Course[] | null = determineMajorPlan(courses);
 
-// POST the appropriate result to the submission URL
-// by checking whether there is a solution.
-if (plan !== null) {
-    // The determined plan was not null, thus a solution is possible.
-    // POST that solution to the submission URL.
-    await post(COURSES_URL, JSON.stringify({ plan: plan }));
-} else {
-    // The determined plan was null, thus a solution is not possible.
-    // POST "no solution" to the submission URL.
-    await post(COURSES_URL, "no solution");
+    // POST the appropriate result to the submission URL
+    // by checking whether there is a solution.
+    if (plan !== null) {
+        // The determined plan was not null, thus a solution is possible.
+        // POST that solution to the submission URL.
+        await post(COURSES_URL, JSON.stringify({ plan: plan }));
+    } else {
+        // The determined plan was null, thus a solution is not possible.
+        // POST "no solution" to the submission URL.
+        await post(COURSES_URL, "no solution");
+    }
 }
+
+main();
 
 // HELPER FUNCTIONS
 /**
