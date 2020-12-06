@@ -46,49 +46,55 @@ if (plan !== null) {
  * @param courses A list of required courses
  */
 function determineMajorPlan(courses: Course[]): Course[] | null {
+    /** The original number of courses. */
+    const coursesAmount: number = courses.length;
+
     /**
      * Closure for checking if the given map of taken courses is the same
-     * size as the list of courses, i.e. all courses are taken.
+     * size as the original number of courses, i.e. all courses are taken.
      * @param takenCourses A map from course UIDs to courses representing taken courses
      */
     function areAllCoursesTaken(takenCourses: Map<CourseUID, Course>): boolean {
-        return takenCourses.size === courses.length;
+        return takenCourses.size === coursesAmount;
     }
 
     /**
      * A map from course UIDs to courses.
      * Values in this map represent taken/satisfied courses.
      */
-    const takenCoursesMap: Map<CourseUID, Course> = new Map();
+    const takenCoursesMap: Map<CourseUID, Course> = new Map<CourseUID, Course>();
+
     /** Tracks whether a major plan is possible. */
     let solutionIsPossible = true;
 
     // Run loop while there are courses that haven't been
     // taken and a major plan is still possible.
     while (!areAllCoursesTaken(takenCoursesMap) && solutionIsPossible) {
-        // Start by assuming that a solution will not be possible.
-        solutionIsPossible = false;
-
-        // Loop through all the courses to find the
-        // next course that can be taken.
-        for (const course of courses) {
-            /**
-             * A unique identifier for the current course.
-             * (Used for key equality in the map of taken courses)
-             */
-            const courseUID = getCourseUID(course);
-
-            // If the current course hasn't already been taken and all
-            // its prerequisites are satisfied, add the course to the map
-            // of taken courses and update the solution to still be possible.
-            if (
-                !takenCoursesMap.has(courseUID) &&
-                isPreReqSatisfied(course.prereqs, takenCoursesMap)
-            ) {
+        // Loop through remaining courses, filtering out any that can be taken
+        // and adding them to the map of taken courses.
+        const remainingCourses = courses.filter((course: Course) => {
+            // If the current course has all its prerequisites satisfied,
+            // add the course to the map of taken courses and update
+            // the solution to still be possible.
+            if (isPreReqSatisfied(course.prereqs, takenCoursesMap)) {
+                /**
+                 * A unique identifier for the current course.
+                 * (Used for the key in the map of taken courses)
+                 */
+                const courseUID = getCourseUID(course);
                 takenCoursesMap.set(courseUID, course);
-                solutionIsPossible = true;
+
+                return false; // filters out current course since it is taken.
+            } else {
+                return true; // keeps current course since it cannot be taken.
             }
-        }
+        });
+
+        // A solution is possible as long as the number of remaining courses to be taken
+        // decreases as prerequisites are completed.
+        solutionIsPossible = remainingCourses.length < courses.length;
+        // Updates the list of courses to only those remaining to be taken.
+        courses = remainingCourses;
     }
 
     // Once the loop has exited, if a solution is still possible,
