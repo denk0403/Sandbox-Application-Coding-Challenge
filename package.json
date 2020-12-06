@@ -1,0 +1,26 @@
+{
+    "name": "sandbox-attempt-2",
+    "private": true,
+    "version": "1.0.0",
+    "description": "Solution to Sandbox courses coding challenge.",
+    "main": "out/solution.js",
+    "type": "module",
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "exec": "node out/solution.js",
+        "be": "npm run build && npm run exec",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "engines": {
+        "node": ">=13.14.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/denk0403/Sandbox-Application-Coding-Challenge.git"
+    },
+    "author": "Dennis Kats",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^14.14.10"
+    }
+}
