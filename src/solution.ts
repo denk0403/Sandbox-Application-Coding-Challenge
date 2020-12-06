@@ -5,7 +5,7 @@ import {
     CourseUID,
     PreReq,
     PreReqType,
-    PreReqValue
+    PreReqValue,
 } from "./courseTypes.js";
 import { get, post } from "./https_helpers.js";
 

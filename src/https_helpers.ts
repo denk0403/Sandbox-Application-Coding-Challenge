@@ -7,11 +7,11 @@ import https from "https";
 export function get(url: string): Promise<string> {
     return new Promise((resolve) => {
         https.get(url, (res) => {
-            const chunks: any[] = [];
-            res.on("data", (/** @type {Buffer} */ dataBuffer) => {
+            const chunks: Buffer[] = [];
+            res.on("data", (dataBuffer: Buffer) => {
                 chunks.push(dataBuffer);
             }).on("end", () => {
-                const data = Buffer.concat(chunks);
+                const data: Buffer = Buffer.concat(chunks);
                 resolve(data.toString());
             });
         });
@@ -34,11 +34,11 @@ export function post(url: string, body: string): Promise<string> {
                 },
             })
             .on("response", (res) => {
-                const chunks: any[] = [];
-                res.on("data", (/** @type {Buffer} */ dataBuffer) => {
+                const chunks: Buffer[] = [];
+                res.on("data", (dataBuffer: Buffer) => {
                     chunks.push(dataBuffer);
                 }).on("end", () => {
-                    const data = Buffer.concat(chunks);
+                    const data: Buffer = Buffer.concat(chunks);
                     resolve(data.toString());
                 });
             })
