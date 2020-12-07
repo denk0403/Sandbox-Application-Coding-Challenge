@@ -74,8 +74,7 @@ function determineMajorPlan(courses: Course[]): Course[] | null {
         // and adding them to the map of taken courses.
         const remainingCourses = courses.filter((course: Course) => {
             // If the current course has all its prerequisites satisfied,
-            // add the course to the map of taken courses and update
-            // the solution to still be possible.
+            // add the course to the map of taken courses.
             if (isPreReqSatisfied(course.prereqs, takenCoursesMap)) {
                 /**
                  * A unique identifier for the current course.
@@ -86,7 +85,7 @@ function determineMajorPlan(courses: Course[]): Course[] | null {
 
                 return false; // filters out current course since it is taken.
             } else {
-                return true; // keeps current course since it cannot be taken.
+                return true; // keep current course since it cannot be taken yet.
             }
         });
 
@@ -135,13 +134,16 @@ function isPreReqSatisfied(preReq: PreReq, takenCoursesMap: Map<CourseUID, Cours
 
     // If the prereq type is an "and", then we must check that
     // every prereq value is satisfied.
-    // If the prereq type is an "or", then we must check that
-    // at least one (some) prereq value is satisfied.
     if (preReq.type === PreReqType.AND) {
         return preReq.values.every(checkPrereqValue);
-    } else if (preReq.type === PreReqType.OR) {
+    }
+    // If the prereq type is an "or", then we must check that
+    // at least one (some) prereq value is satisfied.
+    else if (preReq.type === PreReqType.OR) {
         return preReq.values.some(checkPrereqValue);
-    } else {
+    }
+    // Throw error if the prereq type is unknown for some reason.
+    else {
         throw new Error("Unexpected prereq structure.");
     }
 }
@@ -157,11 +159,12 @@ function isPrereqValueTaken(
 ): boolean {
     // If the prereq value is a CourseInfo, check that it is
     // in the map of taken courses.
-    // Otherwise, the value is another prereq, so check that
-    // it is satisfied.
     if (isCourseInfo(prereqValue)) {
         return isCourseTaken(prereqValue, takenCoursesMap);
-    } else {
+    }
+    // Otherwise, the value is another prereq, so check that
+    // it is satisfied.
+    else {
         return isPreReqSatisfied(prereqValue, takenCoursesMap);
     }
 }
