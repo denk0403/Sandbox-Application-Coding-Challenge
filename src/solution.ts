@@ -5,7 +5,7 @@ import {
     CourseUID,
     PreReq,
     PreReqType,
-    PreReqValue,
+    PreReqValue
 } from "./courseTypes.js";
 import { get, post } from "./https_helpers.js";
 
@@ -65,7 +65,7 @@ function determineMajorPlan(courses: Course[]): Course[] | null {
     const takenCoursesMap: Map<CourseUID, Course> = new Map<CourseUID, Course>();
 
     /** Tracks whether a major plan is possible. */
-    let solutionIsPossible = true;
+    let solutionIsPossible: boolean = true;
 
     // Run loop while there are courses that haven't been
     // taken and a major plan is still possible.
